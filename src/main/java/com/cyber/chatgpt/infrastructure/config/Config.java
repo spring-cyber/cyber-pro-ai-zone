@@ -5,6 +5,7 @@ import com.theokanning.openai.client.OpenAiApi;
 import com.theokanning.openai.service.OpenAiService;
 import okhttp3.OkHttpClient;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import retrofit2.Retrofit;
@@ -21,11 +22,14 @@ import java.time.Duration;
 @Configuration
 public class Config {
 
+    @Autowired
+    private OpenAiConfig openAiConfig;
+
     @Bean
     public OpenAiService openAiService() {
         ObjectMapper mapper = OpenAiService.defaultObjectMapper();
         Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("127.0.0.1", 17890));
-        OkHttpClient client = OpenAiService.defaultClient("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", Duration.ofSeconds(100))
+        OkHttpClient client = OpenAiService.defaultClient(openAiConfig.getApiKey(), Duration.ofSeconds(100))
                 .newBuilder()
                 .proxy(proxy)
                 .build();
