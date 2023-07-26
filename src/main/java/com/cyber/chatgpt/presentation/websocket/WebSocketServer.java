@@ -17,9 +17,13 @@ package com.cyber.chatgpt.presentation.websocket;
 
 import cn.hutool.json.JSONUtil;
 import com.cyber.chatgpt.application.OpenAIService;
+import com.cyber.chatgpt.infrastructure.entity.request.OpenAiRequest;
+import com.cyber.chatgpt.infrastructure.util.SpringContextHolder;
+import com.theokanning.openai.completion.chat.ChatMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+
 import javax.websocket.*;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
@@ -71,9 +75,15 @@ public class WebSocketServer {
 
     @OnMessage
     public void onMessage(String message) {
-        OpenAiRequest openAiRequest = JSONUtil.toBean(message, OpenAiRequest.class);
+        log.info("收到来自窗口" + sid + "的信息:" + message);
+        OpenAiRequest openAiRequest = new OpenAiRequest();
+        openAiRequest.setQuestion(message);
+        openAiRequest.setUid(sid);
         try {
-            SpringContextHolder.getBean(OpenAIService.class).communicate(openAiRequest, this);
+            ChatMessage chatMessage = SpringContextHolder.getBean(OpenAIService.class).testMsgSend(openAiRequest);
+            if (null != chatMessage) {
+                sendMessage(chatMessage.getContent());
+            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -86,7 +96,9 @@ public class WebSocketServer {
     }
 
     public void sendMessage(String message) throws IOException {
-        this.session.getBasicRemote().sendText(message);
+        synchronized (this.session){
+            this.session.getBasicRemote().sendText(JSONUtil.toJsonStr(message));
+        }
     }
 
     public void groupMessage(String message, @PathParam("sid") String sid) {

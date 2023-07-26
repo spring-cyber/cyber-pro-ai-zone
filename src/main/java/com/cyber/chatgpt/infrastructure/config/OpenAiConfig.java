@@ -20,6 +20,7 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
+
 import java.util.List;
 import java.util.Random;
 
@@ -55,6 +56,21 @@ public class OpenAiConfig {
     private Double temperature;
 
     /**
+     * OpenAi的frequency_penalty
+     */
+    private Double frequencyPenalty;
+
+    /**
+     * OpenAi的top_p
+     */
+    private Double topP;
+
+    /**
+     * OpenAi的presence_penalty
+     */
+    private Double presencePenalty;
+
+    /**
      * 综合问答API
      */
     private String openaiApi;
@@ -70,13 +86,19 @@ public class OpenAiConfig {
     private String creditApi;
 
     /**
+     * OpenAi的保留的上下文
+     */
+    private Integer contextNum;
+
+    /**
      * 随机获取一个ApiKey
+     *
      * @return ApiKey
      */
     public String getApiKey() {
         // 转为 List
         List<String> keyList = ListUtil.toList(keys.split(","));
-        if(keyList.size() == 1){
+        if (keyList.size() == 1) {
             return keyList.get(0);
         }
         // 打乱顺序

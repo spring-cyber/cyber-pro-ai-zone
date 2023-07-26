@@ -15,11 +15,11 @@
  */
 package com.cyber.chatgpt.infrastructure.config;
 
-import org.springframework.context.annotation.Bean;
+import com.cyber.chatgpt.infrastructure.util.SpringContextHolder;
+import com.cyber.chatgpt.presentation.websocket.WebSocketServer;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.web.socket.server.standard.ServerEndpointExporter;
 
 /**
  * @author Zheng Jie
@@ -29,13 +29,8 @@ import org.springframework.web.socket.server.standard.ServerEndpointExporter;
 @EnableScheduling
 public class WebSocketConfig {
 
-    @Bean
-    public ServerEndpointExporter serverEndpointExporter() {
-        return new ServerEndpointExporter();
-    }
-
-    @Scheduled(fixedRate=15*1000)
-    public void configureTasks(){
+    @Scheduled(fixedRate = 15 * 1000)
+    public void configureTasks() {
         SpringContextHolder.getBean(WebSocketServer.class).groupMessage("this is the heartbeat message", null);
     }
 }
