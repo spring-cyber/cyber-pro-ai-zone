@@ -43,7 +43,7 @@ jwt:
     /oss/**: classpath:/oss/
 
 openai:
-  keys: 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
+  keys: xxxx
   model: gpt-3.5-turbo-0613
   maxTokens: 3000
   temperature: 0.8
